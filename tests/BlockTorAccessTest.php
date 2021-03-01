@@ -28,6 +28,7 @@ class BlockTorAccessTest extends BaseTestCase
 {
     /**
      * @dataProvider provideMaybeBlockedIps
+     * @covers \Taavi\LaravelTorblock\Middleware\BlockTorAccess::handle
      * @param string $ip
      * @param bool $blocked
      */
