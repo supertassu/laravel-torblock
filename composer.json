@@ -1,0 +1,50 @@
+{
+    "name": "taavi/laravel-torblock",
+    "description": "Laravel package for blocking Tor exit nodes",
+    "type": "library",
+    "license": "GPL-2.0-or-later",
+    "require": {
+        "php": "^7.3|^8.0",
+        "guzzlehttp/guzzle": "^7.2",
+        "illuminate/cache": "^8.29",
+        "illuminate/container": "^8.29",
+        "illuminate/http": "^8.29",
+        "illuminate/support": "^8.29",
+        "illuminate/config": "^8.29",
+        "illuminate/log": "^8.29",
+        "wikimedia/ip-utils": "^3.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^6.13",
+        "phpunit/phpunit": "^9.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Taavi\\LaravelTorblock\\": "includes/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Taavi\\LaravelTorblock\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Taavi\\LaravelTorblock\\LaravelTorblockServiceProvider"
+            ]
+        }
+    },
+    "scripts": {
+        "post-autoload-dump": [
+            "@php vendor/bin/testbench package:discover --ansi"
+        ]
+    },
+    "authors": [
+        {
+            "name": "Taavi Väänänen",
+            "email": "hi@taavi.wtf"
+        }
+    ],
+    "minimum-stability": "stable"
+}
