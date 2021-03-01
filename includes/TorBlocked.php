@@ -18,19 +18,13 @@
 
 namespace Taavi\LaravelTorblock;
 
-use RuntimeException;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
-class TorBlocked extends RuntimeException implements HttpExceptionInterface
+class TorBlocked extends HttpException
 {
-    public function getStatusCode()
+    public function __construct(string $message = null)
     {
-        return Response::HTTP_FORBIDDEN;
-    }
-
-    public function getHeaders()
-    {
-        return [];
+        parent::__construct(Response::HTTP_FORBIDDEN, $message);
     }
 }
