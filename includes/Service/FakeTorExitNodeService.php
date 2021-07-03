@@ -19,6 +19,7 @@
 namespace Taavi\LaravelTorblock\Service;
 
 use Taavi\LaravelTorblock\TorBlocked;
+use Wikimedia\IPUtils;
 
 /**
  * Fake implementation of {@link TorExitNodeService} that will use addresses in the TEST-NET-1 defined in RFC 5737
@@ -29,17 +30,39 @@ class FakeTorExitNodeService extends BaseTorExitNodeService
     const NOT_BLOCKED_EXAMPLE_ADDRESS = '192.0.2.123';
     const BLOCKED_EXAMPLE_ADDRESS = '192.0.2.111';
 
+    const NOT_BLOCKED_EXAMPLE_ADDRESS_V6 = '2001:db8:1::1';
+    const BLOCKED_EXAMPLE_ADDRESS_V6 = '2001:db8:2::2';
+
     /**
-     * Two addresses in the TEST-NET-1 defined in RFC 5737, intended for documentation and examples.
+     * Array of blocked addresses that can be used in tests. This includes
+     *  - Two addresses in the TEST-NET-1 defined in RFC 5737, intended for documentation and examples.
+     *  - One address in the IPv6 prefix reserved for documentation and examples in RFC 3849.
      */
     const BLOCKED_EXAMPLE_ADDRESSES = [
         self::BLOCKED_EXAMPLE_ADDRESS,
-        '192.0.2.222'
+        '192.0.2.222',
+        self::BLOCKED_EXAMPLE_ADDRESS_V6,
     ];
+
+    /** @var array */
+    private $blockedAddresses;
+
+    /**
+     * @param string[] $blockedAddresses IP addresses to treat as blocked, if the contents of
+     * {@link BLOCKED_EXAMPLE_ADDRESSES} are not suitable for some reason.
+     */
+    public function __construct(array $blockedAddresses = self::BLOCKED_EXAMPLE_ADDRESSES)
+    {
+        $this->blockedAddresses = collect($blockedAddresses)
+            ->map(function (string $address) {
+                return IPUtils::sanitizeIP($address);
+            })
+            ->toArray();
+    }
 
     protected function getExitNodes(): array
     {
-        return self::BLOCKED_EXAMPLE_ADDRESSES;
+        return $this->blockedAddresses;
     }
 
     public function createException(string $ip): TorBlocked

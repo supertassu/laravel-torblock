@@ -34,7 +34,9 @@ abstract class BaseTestCase extends TestCase
 
     public static function provideMaybeBlockedIps(): Generator
     {
-        yield 'Blocked address' => [FakeTorExitNodeService::BLOCKED_EXAMPLE_ADDRESS, true];
-        yield 'Open address' => [FakeTorExitNodeService::NOT_BLOCKED_EXAMPLE_ADDRESS, false];
+        yield 'Blocked IPv4 address' => [FakeTorExitNodeService::BLOCKED_EXAMPLE_ADDRESS, true];
+        yield 'Open IPv4 address' => [FakeTorExitNodeService::NOT_BLOCKED_EXAMPLE_ADDRESS, false];
+        yield 'Blocked IPv6 address' => [FakeTorExitNodeService::BLOCKED_EXAMPLE_ADDRESS_V6, true];
+        yield 'Open IPv6 address' => [FakeTorExitNodeService::NOT_BLOCKED_EXAMPLE_ADDRESS_V6, false];
     }
 }

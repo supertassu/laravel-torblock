@@ -18,6 +18,8 @@
 
 namespace Taavi\LaravelTorblock\Service;
 
+use Wikimedia\IPUtils;
+
 abstract class BaseTorExitNodeService implements TorExitNodeService
 {
     /**
@@ -25,6 +27,10 @@ abstract class BaseTorExitNodeService implements TorExitNodeService
      */
     public function isTorExitNode(string $ip): bool
     {
+        // Sanitize the address the same way it's sanitized when collecting data,
+        // this avoids bugs like https://github.com/supertassu/laravel-torblock/issues/1
+        $ip = IPUtils::sanitizeIP($ip);
+
         return in_array($ip, $this->getExitNodes());
     }
 
