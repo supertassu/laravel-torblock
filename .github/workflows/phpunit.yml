@@ -7,7 +7,7 @@ jobs:
       matrix:
         php-versions:
           - 7.4
-          - 8.1
+          - 8.2
     steps:
       - uses: actions/checkout@v2
       - uses: php-actions/composer@v4
