@@ -20,12 +20,8 @@ namespace Taavi\LaravelTorblock\Service;
 
 use Illuminate\Cache\CacheManager;
 use Illuminate\Config\Repository as Config;
-use Illuminate\Contracts\Translation\Translator;
-use Illuminate\Http\Client\Factory as HttpClient;
-use Illuminate\Http\Client\RequestException;
 use Illuminate\Log\Logger;
 use Taavi\LaravelTorblock\TorBlocked;
-use Wikimedia\IPUtils;
 
 /**
  * Fetch and cache Tor exit nodes.
@@ -35,8 +31,8 @@ use Wikimedia\IPUtils;
  */
 class CachingTorExitNodeService extends BaseTorExitNodeService
 {
-    /** @var Translator */
-    private $translator;
+    /** @var TorExitNodeService */
+    private $base;
 
     /** @var Config */
     private $config;
@@ -44,33 +40,20 @@ class CachingTorExitNodeService extends BaseTorExitNodeService
     /** @var CacheManager */
     private $cache;
 
-    /** @var HttpClient */
-    private $httpClient;
-
     /** @var Logger */
     private $logger;
 
     public function __construct(
-        Translator $translator,
+        TorExitNodeService $base,
         Config $config,
         CacheManager $cache,
-        HttpClient $httpClient,
         Logger $logger
     )
     {
-        $this->translator = $translator;
+        $this->base = $base;
         $this->config = $config;
         $this->cache = $cache;
-        $this->httpClient = $httpClient;
         $this->logger = $logger;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function isTorExitNode(string $ip): bool
-    {
-        return in_array($ip, $this->getExitNodes());
     }
 
     /**
@@ -78,8 +61,7 @@ class CachingTorExitNodeService extends BaseTorExitNodeService
      */
     public function createException(string $ip): TorBlocked
     {
-        $message = $this->translator->get('torblock::messages.blocked', ['ip' => $ip]);
-        return new TorBlocked($message);
+        return $this->base->createException($ip);
     }
 
     /**
@@ -92,51 +74,9 @@ class CachingTorExitNodeService extends BaseTorExitNodeService
                 $this->config->get('torblock.cache-prefix').'exit-nodes',
                 $this->config->get('torblock.cache-ttl'),
                 function () {
-                    $this->logger->debug('TorBlock: Loading exit nodes from the Onionoo service.');
-                    return $this->fetchExitNodes();
+                    $this->logger->debug('TorBlock: Loading exit node data.');
+                    return $this->base->getExitNodes();
                 }
             );
-    }
-
-    /**
-     * Load all Tor exit nodes from the Onionoo service.
-     * @return string[]
-     * @throws RequestException
-     */
-    protected function fetchExitNodes(): array
-    {
-        $relays = $this->httpClient
-            ->get($this->config->get('torblock.onionoo-base').'/details?type=relay&running=true&flag=Exit')
-            ->throw()
-            ->json('relays');
-
-        return collect($relays)
-            ->flatMap(function (array $relay) {
-                return isset($relay['exit_addresses'])
-                    ? array_merge($relay['or_addresses'], $relay['exit_addresses'])
-                    : $relay['or_addresses'];
-            })
-            ->map(function ($ip) {
-                // Trim the port if it has one.
-                $portPosition = strrpos($ip, ':');
-                if ($portPosition !== false) {
-                    $ip = substr($ip, 0, $portPosition);
-                }
-
-                // Trim surrounding brackets for IPv6 addresses.
-                $hasBrackets = $ip[0] == '[';
-                if ($hasBrackets) {
-                    $ip = substr( $ip, 1, -1 );
-                }
-
-                if (!IPUtils::isValid($ip)) {
-                    $this->logger->debug('TorBlock: Invalid IP address in Onionoo response.', ['ip' => $ip]);
-                    return null;
-                }
-
-                return IPUtils::sanitizeIP($ip);
-            })
-            ->whereNotNull()
-            ->toArray();
     }
 }

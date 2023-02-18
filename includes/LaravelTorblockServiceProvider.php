@@ -18,8 +18,12 @@
 
 namespace Taavi\LaravelTorblock;
 
+use Illuminate\Cache\CacheManager;
+use Illuminate\Config\Repository as Config;
+use Illuminate\Log\Logger;
 use Illuminate\Support\ServiceProvider;
 use Taavi\LaravelTorblock\Service\CachingTorExitNodeService;
+use Taavi\LaravelTorblock\Service\OnionooTorExitNodeService;
 use Taavi\LaravelTorblock\Service\TorExitNodeService;
 
 class LaravelTorblockServiceProvider extends ServiceProvider
@@ -30,7 +34,14 @@ class LaravelTorblockServiceProvider extends ServiceProvider
             __DIR__ . '/../resources/config/torblock.php', 'torblock'
         );
 
-        $this->app->bind(TorExitNodeService::class, CachingTorExitNodeService::class);
+        $this->app->bind(TorExitNodeService::class, function ($app) {
+            return new CachingTorExitNodeService(
+                $app->make(OnionooTorExitNodeService::class),
+                $app->make(Config::class),
+                $app->make(CacheManager::class),
+                $app->make(Logger::class)
+            );
+        });
     }
 
     public function boot()
