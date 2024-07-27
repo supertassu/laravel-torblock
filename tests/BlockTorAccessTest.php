@@ -20,19 +20,21 @@ namespace Taavi\LaravelTorblock\Tests;
 
 use Illuminate\Http\Request;
 use Mockery;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Taavi\LaravelTorblock\Middleware\BlockTorAccess;
 use Taavi\LaravelTorblock\Service\FakeTorExitNodeService;
 use Taavi\LaravelTorblock\TorBlocked;
 
+#[CoversClass(BlockTorAccess::class)]
 class BlockTorAccessTest extends BaseTestCase
 {
     /**
-     * @dataProvider provideMaybeBlockedIps
-     * @covers \Taavi\LaravelTorblock\Middleware\BlockTorAccess::handle
      * @param string $ip
      * @param bool $blocked
      */
-    public function testMiddleware(string $ip, bool $blocked) {
+	#[DataProvider('provideMaybeBlockedIps')]
+	public function testMiddleware(string $ip, bool $blocked) {
         $middleware = new BlockTorAccess(new FakeTorExitNodeService());
 
         $request = Mockery::mock(Request::class, function (Mockery\MockInterface $mock) use ($ip) {
