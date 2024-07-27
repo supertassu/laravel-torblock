@@ -2,17 +2,10 @@ name: PhpUnit
 on: [push, pull_request]
 jobs:
   build-test:
-    runs-on: ubuntu-22.04
-    strategy:
-      matrix:
-        php-versions:
-          - 8.2
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v2
-      - uses: php-actions/composer@v4
-        with:
-          php_version: ${{ matrix.php-versions }}
-          composer_version: 2
-      - uses: php-actions/phpunit@v1
-        with:
-          php_version: ${{ matrix.php-versions }}
+      - uses: actions/checkout@v4
+      - name: composer install
+        run: composer install
+      - name: composer test
+        run: composer test
