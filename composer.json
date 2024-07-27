@@ -13,7 +13,7 @@
         "illuminate/support": "^11.0",
         "illuminate/config": "^11.0",
         "illuminate/log": "^11.0",
-        "wikimedia/ip-utils": "^4.0"
+        "wikimedia/ip-utils": "^5.0"
     },
     "require-dev": {
         "orchestra/testbench": "^9.0",
