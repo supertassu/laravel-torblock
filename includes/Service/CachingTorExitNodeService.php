@@ -31,17 +31,10 @@ use Taavi\LaravelTorblock\TorBlocked;
  */
 class CachingTorExitNodeService extends BaseTorExitNodeService
 {
-    /** @var TorExitNodeService */
-    private $base;
-
-    /** @var Config */
-    private $config;
-
-    /** @var CacheManager */
-    private $cache;
-
-    /** @var Logger */
-    private $logger;
+    private TorExitNodeService $base;
+    private Config $config;
+    private CacheManager $cache;
+    private Logger $logger;
 
     public function __construct(
         TorExitNodeService $base,

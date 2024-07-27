@@ -34,17 +34,10 @@ use Wikimedia\IPUtils;
  */
 class OnionooTorExitNodeService extends BaseTorExitNodeService
 {
-    /** @var Translator */
-    private $translator;
-
-    /** @var Config */
-    private $config;
-
-    /** @var HttpClient */
-    private $httpClient;
-
-    /** @var Logger */
-    private $logger;
+    private Translator $translator;
+    private Config $config;
+    private HttpClient $httpClient;
+    private Logger $logger;
 
     public function __construct(
         Translator $translator,
@@ -81,11 +74,11 @@ class OnionooTorExitNodeService extends BaseTorExitNodeService
             ->json('relays');
 
         return collect($relays)
-            ->flatMap(function (array $relay) {
-                return isset($relay['exit_addresses'])
+            ->flatMap(
+                fn (array $relay) => isset($relay['exit_addresses'])
                     ? array_merge($relay['or_addresses'], $relay['exit_addresses'])
-                    : $relay['or_addresses'];
-            })
+                    : $relay['or_addresses']
+            )
             ->map(function ($ip) {
                 // Trim the port if it has one.
                 $portPosition = strrpos($ip, ':');

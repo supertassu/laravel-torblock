@@ -28,7 +28,7 @@ use Taavi\LaravelTorblock\Service\TorExitNodeService;
 
 class LaravelTorblockServiceProvider extends ServiceProvider
 {
-    public function register()
+    public function register(): void
     {
         $this->mergeConfigFrom(
             __DIR__ . '/../resources/config/torblock.php', 'torblock'
@@ -44,7 +44,7 @@ class LaravelTorblockServiceProvider extends ServiceProvider
         });
     }
 
-    public function boot()
+    public function boot(): void
     {
         $this->publishes([
             __DIR__ . '/../resources/config/torblock.php' => $this->app->configPath('torblock.php'),

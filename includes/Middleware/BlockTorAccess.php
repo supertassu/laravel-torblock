@@ -27,8 +27,7 @@ use Taavi\LaravelTorblock\Service\TorExitNodeService;
  */
 class BlockTorAccess
 {
-    /** @var TorExitNodeService */
-    private $torExitNodeService;
+    private TorExitNodeService $torExitNodeService;
 
     public function __construct(TorExitNodeService $torExitNodeService)
     {
