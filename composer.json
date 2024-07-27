@@ -6,7 +6,6 @@
     "version": "2.0.0",
     "require": {
         "php": "^8.2",
-        "guzzlehttp/guzzle": "^7.5",
         "illuminate/cache": "^11.0",
         "illuminate/container": "^11.0",
         "illuminate/http": "^11.0",
