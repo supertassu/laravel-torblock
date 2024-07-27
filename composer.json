@@ -7,16 +7,16 @@
     "require": {
         "php": "^8.2",
         "guzzlehttp/guzzle": "^7.5",
-        "illuminate/cache": "^10.0",
-        "illuminate/container": "^10.0",
-        "illuminate/http": "^10.0",
-        "illuminate/support": "^10.0",
-        "illuminate/config": "^10.0",
-        "illuminate/log": "^10.0",
+        "illuminate/cache": "^11.0",
+        "illuminate/container": "^11.0",
+        "illuminate/http": "^11.0",
+        "illuminate/support": "^11.0",
+        "illuminate/config": "^11.0",
+        "illuminate/log": "^11.0",
         "wikimedia/ip-utils": "^4.0"
     },
     "require-dev": {
-        "orchestra/testbench": "^8.0",
+        "orchestra/testbench": "^9.0",
         "phpunit/phpunit": "^10.0"
     },
     "autoload": {
