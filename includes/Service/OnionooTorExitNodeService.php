@@ -67,7 +67,7 @@ class OnionooTorExitNodeService extends BaseTorExitNodeService
     protected function getExitNodeIpAddresses()
     {
         $relays = $this->httpClient
-            ->get($this->config->get('torblock.onionoo-base').'/details?type=relay&running=true&flag=Exit')
+            ->get($this->config->get('torblock.onionoo-base').'/details?type=relay&running=true&flag=Exit&fields=or_addresses,exit_addresses')
             ->throw()
             ->json('relays');
 
