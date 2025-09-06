@@ -3,7 +3,7 @@
     "description": "Laravel package for blocking Tor exit nodes",
     "type": "library",
     "license": "GPL-2.0-or-later",
-    "version": "3.0.0",
+    "version": "3.1.0",
     "require": {
         "php": "^8.2",
         "illuminate/cache": "^11.0",
