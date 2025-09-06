@@ -31,6 +31,8 @@ use Taavi\LaravelTorblock\TorBlocked;
  */
 class CachingTorExitNodeService extends BaseTorExitNodeService
 {
+    private const CACHE_VERSION = 2;
+
     private TorExitNodeService $base;
     private Config $config;
     private CacheManager $cache;
@@ -64,7 +66,7 @@ class CachingTorExitNodeService extends BaseTorExitNodeService
     {
         return $this->cache
             ->remember(
-                $this->config->get('torblock.cache-prefix').'exit-nodes',
+                $this->config->get('torblock.cache-prefix').'exit-nodes-'.self::CACHE_VERSION,
                 $this->config->get('torblock.cache-ttl'),
                 function () {
                     $this->logger->debug('TorBlock: Loading exit node data.');

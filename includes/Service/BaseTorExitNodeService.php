@@ -31,12 +31,12 @@ abstract class BaseTorExitNodeService implements TorExitNodeService
         // this avoids bugs like https://github.com/supertassu/laravel-torblock/issues/1
         $ip = IPUtils::sanitizeIP($ip);
 
-        return in_array($ip, $this->getExitNodes());
+        return isset($this->getExitNodes()[$ip]);
     }
 
     /**
      * Get a cached list of Tor exit nodes, or load and cache a new list if it's not currently available.
-     * @return string[]
+     * @return array<string, 1>
      */
     protected abstract function getExitNodes(): array;
 }

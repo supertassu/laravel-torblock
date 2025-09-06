@@ -45,7 +45,7 @@ class FakeTorExitNodeService extends BaseTorExitNodeService
     ];
 
     /** @var string[] */
-    private array $blockedAddresses;
+    private array $blockedAddresses = [];
 
     /**
      * @param string[] $blockedAddresses IP addresses to treat as blocked, if the contents of
@@ -53,9 +53,9 @@ class FakeTorExitNodeService extends BaseTorExitNodeService
      */
     public function __construct(array $blockedAddresses = self::BLOCKED_EXAMPLE_ADDRESSES)
     {
-        $this->blockedAddresses = collect($blockedAddresses)
-            ->map(fn (string $address) => IPUtils::sanitizeIP($address))
-            ->toArray();
+        foreach ( $blockedAddresses as $ip ) {
+            $this->blockedAddresses[IPUtils::sanitizeIP($ip)] = 1;
+        }
     }
 
 	/**

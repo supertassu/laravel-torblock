@@ -21,8 +21,8 @@ namespace Taavi\LaravelTorblock\Service;
 use Illuminate\Config\Repository as Config;
 use Illuminate\Contracts\Translation\Translator;
 use Illuminate\Http\Client\Factory as HttpClient;
-use Illuminate\Http\Client\RequestException;
 use Illuminate\Log\Logger;
+use Iterator;
 use Taavi\LaravelTorblock\TorBlocked;
 use Wikimedia\IPUtils;
 
@@ -62,44 +62,53 @@ class OnionooTorExitNodeService extends BaseTorExitNodeService
     }
 
     /**
-     * Load all Tor exit nodes from the Onionoo service.
-     * @return string[]
-     * @throws RequestException
+     * @return Iterator<string>
      */
-    protected function getExitNodes(): array
+    protected function getExitNodeIpAddresses()
     {
         $relays = $this->httpClient
             ->get($this->config->get('torblock.onionoo-base').'/details?type=relay&running=true&flag=Exit')
             ->throw()
             ->json('relays');
 
-        return collect($relays)
-            ->flatMap(
-                fn (array $relay) => isset($relay['exit_addresses'])
-                    ? array_merge($relay['or_addresses'], $relay['exit_addresses'])
-                    : $relay['or_addresses']
-            )
-            ->map(function ($ip) {
-                // Trim the port if it has one.
-                $portPosition = strrpos($ip, ':');
-                if ($portPosition !== false) {
-                    $ip = substr($ip, 0, $portPosition);
-                }
+        foreach ( $relays as $relay ) {
+            yield from $relay['or_addresses'];
 
-                // Trim surrounding brackets for IPv6 addresses.
-                $hasBrackets = $ip[0] == '[';
-                if ($hasBrackets) {
-                    $ip = substr( $ip, 1, -1 );
-                }
+            if ( isset( $relay['exit_addresses'] ) ) {
+                yield from $relay['exit_addresses'];
+            }
+        }
+    }
 
-                if (!IPUtils::isValid($ip)) {
-                    $this->logger->debug('TorBlock: Invalid IP address in Onionoo response.', ['ip' => $ip]);
-                    return null;
-                }
+    /**
+     * Load all Tor exit nodes from the Onionoo service.
+     * @return array<string, 1>
+     */
+    protected function getExitNodes(): array
+    {
+        $nodes = [];
 
-                return IPUtils::sanitizeIP($ip);
-            })
-            ->whereNotNull()
-            ->toArray();
+        foreach ( $this->getExitNodeIpAddresses() as $ip ) {
+            // Trim the port if it has one.
+            $portPosition = strrpos($ip, ':');
+            if ($portPosition !== false) {
+                $ip = substr($ip, 0, $portPosition);
+            }
+
+            // Trim surrounding brackets for IPv6 addresses.
+            $hasBrackets = $ip[0] == '[';
+            if ($hasBrackets) {
+                $ip = substr($ip, 1, -1);
+            }
+
+            if (!IPUtils::isValid($ip)) {
+                $this->logger->debug('TorBlock: Invalid IP address in Onionoo response.', ['ip' => $ip]);
+                continue;
+            }
+
+            $nodes[IPUtils::sanitizeIP($ip)] = 1;
+        }
+
+        return $nodes;
     }
 }
