@@ -5,17 +5,17 @@
     "license": "GPL-2.0-or-later",
     "require": {
         "php": "^8.2",
-        "illuminate/cache": "^11.0",
-        "illuminate/container": "^11.0",
-        "illuminate/http": "^11.0",
-        "illuminate/support": "^11.0",
-        "illuminate/config": "^11.0",
-        "illuminate/log": "^11.0",
-        "wikimedia/ip-utils": "^5.0"
+        "illuminate/cache": "^11.0|^12.0|^13.0",
+        "illuminate/container": "^11.0|^12.0|^13.0",
+        "illuminate/http": "^11.0|^12.0|^13.0",
+        "illuminate/support": "^11.0|^12.0|^13.0",
+        "illuminate/config": "^11.0|^12.0|^13.0",
+        "illuminate/log": "^11.0|^12.0|^13.0",
+        "wikimedia/ip-utils": "^6.0"
     },
     "require-dev": {
-        "orchestra/testbench": "^9.0",
-        "phpunit/phpunit": "^11.0"
+        "orchestra/testbench": "^11",
+        "phpunit/phpunit": "^13"
     },
     "autoload": {
         "psr-4": {
